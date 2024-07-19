@@ -107,8 +107,14 @@
                     </tr>
             `;
 
+            let inversionInicial = inversion;
+            let gananciaMes = 0;
+            let gananciaTresMeses = 0;
+            let gananciaSemestre = 0;
+            let gananciaAnual = 0;
+
             // Itera por varios días
-            for (let dia = 1; dia <= 30; dia++) {
+            for (let dia = 0; dia <= 365; dia++) {
                 // Calcula gananciaDiaria
                 let gananciaDiaria = iED * inversion;
                 gananciaDiaria = parseFloat(gananciaDiaria.toFixed(2));
@@ -126,15 +132,28 @@
                 const total = inversion + gananciaDiaria - RetFuente;
 
                 // Agrega la fila a la tabla
-                resultado += `
-                    <tr>
-                        <td>${dia}</td>
-                        <td>$${inversion.toFixed(2)}</td>
-                        <td>$${gananciaDiaria.toFixed(2)}</td>
-                        <td>$${RetFuente.toFixed(2)}</td>
-                        <td>$${total.toFixed(2)}</td>
-                    </tr>
-                `;
+                if (dia <= 10) { // Solo muestra los primeros 10 días en la tabla
+                    resultado += `
+                        <tr>
+                            <td>${dia}</td>
+                            <td>$${inversion.toFixed(2)}</td>
+                            <td>$${gananciaDiaria.toFixed(2)}</td>
+                            <td>$${RetFuente.toFixed(2)}</td>
+                            <td>$${total.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }
+
+                // Actualiza las ganancias para días específicos
+                if (dia === 30) {
+                    gananciaMes = total - inversionInicial;
+                } else if (dia === 90) {
+                    gananciaTresMeses = total - inversionInicial;
+                } else if (dia === 180) {
+                    gananciaSemestre = total - inversionInicial;
+                } else if (dia === 365) {
+                    gananciaAnual = total - inversionInicial;
+                }
 
                 // Actualiza la inversión para el siguiente día
                 inversion = total;
@@ -142,8 +161,15 @@
 
             resultado += `</table>`;
 
-            // Muestra el resultado
-            document.getElementById('result').innerHTML = resultado;
+            // Muestra las ganancias y el resultado
+            const ganancias = `
+                <p><b>Ganancia en un mes:</b> $${gananciaMes.toFixed(2)}</p>
+                <p><b>Ganancia en 3 meses:</b> $${gananciaTresMeses.toFixed(2)}</p>
+                <p><b>Ganancia semestral:</b> $${gananciaSemestre.toFixed(2)}</p>
+                <p><b>Ganancia anual:</b> $${gananciaAnual.toFixed(2)}</p>
+            `;
+
+            document.getElementById('result').innerHTML = ganancias + resultado;
         });
     </script>
 </body>
