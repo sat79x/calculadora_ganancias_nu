@@ -12,7 +12,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
             background: #fff;
             padding: 20px;
@@ -74,6 +74,10 @@
                 <label for="interes">Interés Efectivo Anual (%):</label>
                 <input type="number" id="interes" name="interes" min="0" step="0.01" required>
             </div>
+            <div class="form-group">
+                <label for="fechaInicio">Fecha de inicio:</label>
+                <input type="date" id="fechaInicio" name="fechaInicio" required>
+            </div>
             <button type="submit">Calcular</button>
         </form>
         <div id="result"></div>
@@ -86,9 +90,10 @@
             // Obtén los valores de los campos
             let inversion = parseFloat(document.getElementById('inversion').value);
             const interes = parseFloat(document.getElementById('interes').value) / 100; // Convertir el interés a decimal
+            const fechaInicio = new Date(document.getElementById('fechaInicio').value); // Obtener la fecha inicial
 
             // Verifica que los valores sean números válidos
-            if (isNaN(inversion) || isNaN(interes)) {
+            if (isNaN(inversion) || isNaN(interes) || isNaN(fechaInicio.getTime())) {
                 alert('Por favor, ingrese valores válidos.');
                 return;
             }
@@ -100,6 +105,7 @@
                 <table>
                     <tr>
                         <th>Día</th>
+                        <th>Fecha</th>
                         <th>Inversión</th>
                         <th>Ganancia Diaria</th>
                         <th>Retención en la Fuente</th>
@@ -131,11 +137,17 @@
                 // Calcula el valor total
                 const total = inversion + gananciaDiaria - RetFuente;
 
+                // Calcula la fecha para el día actual
+                const fechaActual = new Date(fechaInicio);
+                fechaActual.setDate(fechaInicio.getDate() + dia);
+                const fechaFormateada = fechaActual.toISOString().split('T')[0]; // Formatea la fecha en YYYY-MM-DD
+
                 // Agrega la fila a la tabla
-                if (dia <= 30) { // Solo muestra los primeros 10 días en la tabla
+                if (dia <= 30) { // Solo muestra los primeros 30 días en la tabla
                     resultado += `
                         <tr>
                             <td>${dia}</td>
+                            <td>${fechaFormateada}</td>
                             <td>$${inversion.toFixed(2)}</td>
                             <td>$${gananciaDiaria.toFixed(2)}</td>
                             <td>$${RetFuente.toFixed(2)}</td>
